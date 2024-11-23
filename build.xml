@@ -1,0 +1,68 @@
+<project name="SITAiRIS_Lab9" default="ci" basedir=".">
+    <property name="src.dir" value="src" />
+    <property name="test.dir" value="test" />
+    <property name="lib.dir" value="lib" />
+
+    <property name="build.dir" value="build" />
+    <property name="classes.dir" value="${build.dir}/classes" />
+
+    <property name="package.dir" value="package" />
+    <property name="jar.name" value="SITAiRIS_Lab9.jar" />
+    <property name="deploy.dir" value="deploy" />
+
+    <target name="clean">
+        <delete dir="${build.dir}" />
+        <delete dir="${package.dir}" />
+    </target>
+
+    <target name="prepare">
+        <mkdir dir="${classes.dir}" />
+    </target>
+
+    <target name="compile" depends="prepare">
+        <javac srcdir="${src.dir}" destdir="${classes.dir}">
+            <classpath>
+<!--                добавляет зависимости в classpath-->
+                <fileset dir="${lib.dir}" includes="*.jar" />
+            </classpath>
+        </javac>
+
+        <javac srcdir="${test.dir}" destdir="${classes.dir}">
+            <classpath>
+                <fileset dir="${lib.dir}" includes="*.jar" />
+            </classpath>
+        </javac>
+    </target>
+
+    <target name="test" depends="compile">
+        <mkdir dir="${build.dir}/test-results" />
+        <junit printsummary="true" haltonfailure="true">
+            <classpath>
+                <pathelement path="${classes.dir}" />
+                <fileset dir="${lib.dir}" includes="*.jar" />
+            </classpath>
+<!--            определяет набор тестов-->
+            <batchtest todir="${build.dir}/test-results">
+                <fileset dir="${test.dir}" includes="*Test.java"/>
+            </batchtest>
+        </junit>
+    </target>
+
+    <target name="package" depends="test">
+<!--        создает jar-->
+        <jar destfile="${package.dir}/${jar.name}" basedir="${classes.dir}">
+<!--            определяет файл, необходимый для запуска приложение через консоль-->
+            <manifest>
+                <attribute name="Main-Class" value="Main" />
+            </manifest>
+        </jar>
+    </target>
+
+    <target name="deploy" depends="package">
+        <copy file="${package.dir}/${jar.name}" todir="${deploy.dir}" />
+    </target>
+
+    <target name="ci" depends="deploy">
+        <echo>CI/CD сценарий успешно завершен!</echo>
+    </target>
+</project>
