@@ -4,19 +4,19 @@ pipeline {
     stages {
         stage('Clone Repository') {
             steps {
-                git branch: 'main', url: "https://github.com/ErevanskShpak/SITAiRIS_Lab9.git"
+                git branch: 'main', url: 'https://github.com/ErevanskShpak/SITAiRIS_Lab9.git'
             }
         }
 
         stage('Execute') {
             steps {
-                sh 'ant ci'
+                bat 'ant ci'
             }
         }
     }
     post {
         success {
-            echo 'Успех'
+            echo 'Успешно выполнен'
         }
         failure {
             echo 'Провал'
